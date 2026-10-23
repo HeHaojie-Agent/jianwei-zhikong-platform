@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { resolveAccess } from '../lib/access.ts';
+const owner={userId:'site-scoped-owner',email:'owner@example.com'};
+assert.equal(resolveAccess(null,undefined).canEdit,false);
+assert.equal(resolveAccess(owner,undefined).canEdit,false);
+assert.equal(resolveAccess(null,'owner@example.com').canEdit,false);
+assert.equal(resolveAccess({userId:'other',email:'other@example.com'},'owner@example.com').canEdit,false);
+assert.equal(resolveAccess({...owner,userId:''},'owner@example.com').canEdit,false);
+assert.equal(resolveAccess(owner,'owner@example.com').canEdit,true);
+assert.equal(resolveAccess(owner,' OWNER@EXAMPLE.COM ').canEdit,true);
+assert.equal(resolveAccess(null,undefined,true).canEdit,true);
+assert.equal(resolveAccess(null,'owner@example.com',true).canEdit,false);
+assert.equal(resolveAccess(null,undefined).signedIn,false);
+assert.equal(resolveAccess(owner,'owner@example.com').signedIn,true);
+console.log('PASS: 11 access cases; anonymous/other accounts cannot edit, production fails closed.');

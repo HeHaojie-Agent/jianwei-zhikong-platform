@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>见微知空 · 低空环境感知平台 | 项目说明</title>
+<meta name="description" content="见微知空（Jianwei Zhikong）低空环境感知平台：用飞控原生数据做风场估计与磁场异常初筛。公开演示免登录访问，源代码以 MIT 许可开源。">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --bg:#061019; --bg2:#08161f; --panel:#0d2130; --panel2:#102a3a;
+    --line:rgba(114,160,184,.22); --line2:rgba(114,160,184,.36);
+    --text:#dceaf3; --muted:#8fa9b8; --teal:#8ce2ce; --blue:#70b7ff; --amber:#f0c274;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:radial-gradient(1200px 700px at 15% -10%,#0f2a3b 0%,var(--bg) 55%) no-repeat,var(--bg);
+    color:var(--text);font:16px/1.75 "PingFang SC","Microsoft YaHei","Hiragino Sans GB","Noto Sans SC",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  header.top{
+    position:sticky;top:0;z-index:10;background:rgba(6,16,25,.86);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .top-in{display:flex;align-items:center;gap:14px;height:62px;max-width:1080px;margin:0 auto;padding:0 22px}
+  .logo{width:34px;height:34px;border-radius:9px;flex:none}
+  .brand{display:flex;flex-direction:column;line-height:1.15}
+  .brand b{font-size:17px;letter-spacing:.04em}
+  .brand span{font-size:10px;letter-spacing:.22em;color:var(--muted)}
+  .top nav{margin-left:auto;display:flex;gap:18px;font-size:14px}
+  @media(max-width:720px){.top nav{display:none}}
+  .hero{padding:64px 0 40px}
+  .kicker{font-size:12px;letter-spacing:.26em;color:var(--teal);text-transform:uppercase}
+  h1{font-size:clamp(30px,4.6vw,46px);line-height:1.2;margin:14px 0 12px;letter-spacing:.02em}
+  .lead{font-size:17px;color:#b7cdda;max-width:60ch;margin:0}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:10px;border:1px solid var(--line2);
+    color:var(--text);font-size:15px;background:var(--panel);transition:.18s}
+  .btn:hover{text-decoration:none;border-color:var(--teal);transform:translateY(-1px)}
+  .btn.primary{background:linear-gradient(180deg,#1d5b62,#14454d);border-color:#39808a;color:#e8fffb;font-weight:600}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .tag{font-size:12.5px;color:#a9c4d2;border:1px solid var(--line);background:rgba(16,42,58,.6);border-radius:999px;padding:4px 12px}
+  section{padding:38px 0;border-top:1px solid var(--line)}
+  h2{font-size:22px;margin:0 0 8px;letter-spacing:.02em}
+  h2 .en{display:block;font-size:11px;letter-spacing:.24em;color:var(--muted);font-weight:400;margin-top:6px}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:20px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px}
+  .card h3{margin:0 0 6px;font-size:15.5px;color:#e6f4fb}
+  .card p{margin:0;font-size:14px;color:var(--muted)}
+  .note{border-left:3px solid var(--amber);background:rgba(240,194,116,.06);padding:14px 18px;border-radius:0 10px 10px 0;margin-top:18px}
+  .note b{color:var(--amber)}
+  .note p{margin:6px 0 0;font-size:14.5px;color:#c8bfa9}
+  ul.plain{margin:14px 0 0;padding-left:20px;color:#b7cdda;font-size:15px}
+  ul.plain li{margin:7px 0}
+  .shots{display:grid;gap:14px;grid-template-columns:1.6fr 1fr;margin-top:20px;align-items:start}
+  @media(max-width:820px){.shots{grid-template-columns:1fr}}
+  .shot{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+  .shot img{display:block;width:100%;height:auto}
+  .shot figcaption{font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line)}
+  figure{margin:0}
+  pre{background:#04101a;border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow:auto;font-size:13.5px;line-height:1.6}
+  code{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:.92em}
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:500;font-size:13px;letter-spacing:.04em}
+  footer{border-top:1px solid var(--line);padding:26px 0 44px;color:var(--muted);font-size:13.5px}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
+  .muted{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <img class="logo" src="./favicon.svg" alt="">
+    <div class="brand"><b>见微知空</b><span>JIANWEI ZHIKONG</span></div>
+    <nav>
+      <a href="./index.html">公开演示</a>
+      <a href="#scope">能力范围</a>
+      <a href="#boundary">数据边界</a>
+      <a href="#license">开源许可</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Low-Altitude Environment Intelligence</div>
+    <h1>见微知空 · 低空环境感知平台</h1>
+    <p class="lead">用飞控已有的 IMU、磁力计、位置、姿态与动力状态数据，做风场估计与磁场异常初筛，把每一次飞行沉淀为可追溯的低空环境记录。</p>
+    <div class="cta">
+      <a class="btn primary" href="./index.html">进入公开演示 →</a>
+      <a class="btn" href="#license">查看开源许可</a>
+    </div>
+    <div class="tags">
+      <span class="tag">免登录访问</span>
+      <span class="tag">只读合成演示</span>
+      <span class="tag">电脑 / 手机自适应</span>
+      <span class="tag">MIT 开源</span>
+    </div>
+  </div>
+
+  <section id="what">
+    <h2>这是什么<span class="en">WHAT IT IS</span></h2>
+    <p class="lead" style="font-size:16px">一个可运行的低空环境感知演示系统：可视化工作台、管理后台、服务端接口与持久化数据库。公开访客无需登录即可浏览固定合成演示——回放轨迹、切换任务、查看关注点、导出任务报告。</p>
+    <div class="grid">
+      <div class="card"><h3>感知总览</h3><p>风速估计、磁场强度、待复核关注点与任务数据量的四项摘要，配合飞行状态与趋势曲线。</p></div>
+      <div class="card"><h3>风场分析</h3><p>园区空间示意与风矢量图层，配合回放时间轴查看风向随位置的变化。</p></div>
+      <div class="card"><h3>磁场初筛</h3><p>机体磁力计通道初筛参考，标注关注点并支持复核状态与说明记录。</p></div>
+      <div class="card"><h3>业务与数据</h3><p>任务、设备、数据集、报告与操作记录；CSV 模板下载、导入校验与遥测导出。</p></div>
+    </div>
+  </section>
+
+  <section id="scope">
+    <h2>已实现的能力<span class="en">IMPLEMENTED</span></h2>
+    <ul class="plain">
+      <li>飞行轨迹回放：播放、拖动进度、游标读数、任务切换、地图图层与缩放。</li>
+      <li>风速与磁场趋势曲线，随回放时间联动更新。</li>
+      <li>任务创建、搜索、筛选与状态维护；设备登记与维护状态管理。</li>
+      <li>CSV 模板下载、导入校验、来源隔离与遥测 CSV 导出。</li>
+      <li>关注事件复核、记录回查、操作日志。</li>
+      <li>任务报告导出，浏览器打开后可打印或保存为 PDF。</li>
+      <li>电脑与手机响应式布局；后端持久化，刷新不丢记录。</li>
+    </ul>
+  </section>
+
+  <section id="boundary">
+    <h2>数据与能力边界<span class="en">HONEST SCOPE</span></h2>
+    <p class="lead" style="font-size:16px">本项目当前是一个<strong>可运行的演示系统</strong>，不是已部署的生产系统。以下边界与演示内容一并公开，避免误读。</p>
+    <div class="note">
+      <b>合成数据</b>
+      <p>演示中的 3 项任务、3 台设备、720 条遥测与关注记录均为明确标记的合成数据，不代表真实试飞规模、训练数据量或实测精度。</p>
+    </div>
+    <ul class="plain">
+      <li>尚未连接真实飞控、机型动力学标定、风场反演模型、磁干扰补偿算法或自动异常识别模型；本仓库不包含算法模型权重与真实实验数据集。</li>
+      <li>监测工作台地图为园区空间示意，不能用于导航；示例风矢量不代表实测风场。</li>
+      <li>导入 CSV 中的风速、风向须为已计算值，导入后不会自动生成异常记录；无关注点不等于“检测正常”。</li>
+      <li>磁场初筛不等同射频、电场测量或完整电磁兼容认证；设备“可用”为手工标记，不代表飞控在线。</li>
+      <li>平台不发送起飞或飞控指令，不替代飞手决策或专业仪器复测。</li>
+    </ul>
+  </section>
+
+  <section id="preview">
+    <h2>界面预览<span class="en">SCREENS</span></h2>
+    <div class="shots">
+      <figure class="shot"><img src="./assets/workbench.jpg" alt="感知工作台界面" loading="lazy"><figcaption>感知工作台：任务切换、轨迹回放与趋势联动</figcaption></figure>
+      <div>
+        <figure class="shot" style="margin-bottom:14px"><img src="./assets/mobile.jpg" alt="手机端界面" loading="lazy"><figcaption>手机端自适应布局</figcaption></figure>
+        <figure class="shot"><img src="./assets/report.jpg" alt="报告预览界面" loading="lazy"><figcaption>任务报告导出与打印预览</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="run">
+    <h2>本地运行完整工程<span class="en">RUN LOCALLY</span></h2>
+    <p class="lead" style="font-size:16px">公开演示是只读的静态页面。需要创建、导入、修改数据时，请运行带有服务端与数据库的完整工程（Node.js 22.13 或以上）。</p>
+    <pre><code># 解压完整工程源码后，在工程根目录
+双击 启动平台.cmd          # Windows 一键启动
+# 或
+npm install
+npm run build && npm start
+# 打开 http://127.0.0.1:5173/</code></pre>
+    <p class="muted" style="font-size:14px">线上与本地数据库相互独立；首次启动需要安装依赖并初始化数据库，可能需要数分钟。</p>
+  </section>
+
+  <section id="license">
+    <h2>开源与许可<span class="en">LICENSE</span></h2>
+    <table>
+      <tr><th style="width:38%">内容</th><th>许可</th></tr>
+      <tr><td>本项目自有代码（前后端、界面）</td><td>MIT License</td></tr>
+      <tr><td>React / React DOM</td><td>MIT</td></tr>
+      <tr><td>lucide-react 图标</td><td>ISC</td></tr>
+      <tr><td>Tailwind CSS</td><td>MIT</td></tr>
+      <tr><td>Noto Sans SC 字体</td><td>SIL Open Font License 1.1</td></tr>
+    </table>
+    <p class="muted" style="font-size:14px;margin-top:14px">第三方组件的完整许可文本见仓库 <code>05_开源组件许可/</code>；项目自有代码以 MIT 许可发布，可自由使用、修改与再分发，请保留版权声明。</p>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>见微知空 · 低空环境感知平台 · 公开演示（只读）</span>
+    <span>演示数据为合成数据，仅用于功能展示</span>
+  </div>
+</footer>
+
+</body>
+</html>
