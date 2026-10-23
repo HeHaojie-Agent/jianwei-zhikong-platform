@@ -4,6 +4,8 @@
 
 **公开演示（免登录、只读）：** <https://hehaojie-agent.github.io/jianwei-zhikong-platform/>
 
+**源代码仓库：** <https://github.com/HeHaojie-Agent/jianwei-zhikong-platform>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f.svg)](./LICENSE)
 
 ---
@@ -67,7 +69,7 @@ Windows 用户也可以直接双击 `source/启动平台.cmd`。
 
 ## 发布公开演示站
 
-静态演示站不依赖任何后端，`site/` 目录即可托管。本仓库已配置 GitHub Actions：推送到 `main` 且改动 `site/` 时自动发布到 GitHub Pages。
+静态演示站不依赖任何后端，`site/` 目录即可托管。仓库已配置 GitHub Actions：推送 `main` 且改动 `site/` 时自动发布到 GitHub Pages。
 
 手动托管到其他平台（国内访问更快）时：
 
